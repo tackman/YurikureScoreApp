@@ -1,0 +1,53 @@
+steps:
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'generate']
+    env:
+      - 'APIKEY=${_APIKEY}'
+      - 'AUTHDOMAIN=${_AUTHDOMAIN}'
+      - 'DATABASEURL={_DATABASEURL}'
+      - 'MESSAGINGSENDERID=${_MESSAGINGSENDERID}'
+      - 'PROJECTID=${_PROJECTID}'
+      - 'STORAGEBUCKET=${_STORAGEBUCKET}'
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'test:all']
+
+    name: 'tackman/aws'
+    args: ['configure', 'set', 'preview.cloudfront', 'true']
+
+    name: 'tackman/aws'
+    args: ['s3', 'rm', 's3://yurikure.wr-inst.org/app', '--recursive']
+    env:
+      - 'AWS_ACCESS_KEY_ID=${_AWS_ACCESS_KEY_ID}'
+      - 'AWS_SECRET_ACCESS_KEY=${_AWS_SECRET_ACCESS_KEY}'
+
+    name: 'tackman/aws'
+    args: ['s3', 'cp', './dist', 's3://yurikure.wr-inst.org/app', '--recursive', '--exclude', '"*"', '--include', '"*.html"', '--cache-control', 'no-store', '--acl', 'public-read']
+    env:
+      - 'AWS_ACCESS_KEY_ID=${_AWS_ACCESS_KEY_ID}'
+      - 'AWS_SECRET_ACCESS_KEY=${_AWS_SECRET_ACCESS_KEY}'
+
+    name: 'tackman/aws'
+    args: ['s3', 'cp', './dist', 's3://yurikure.wr-inst.org/app', '--recursive', '--exclude', '"*"', '--include', '"*.js"', '--cache-control', 'no-store', '--acl', 'public-read']
+    env:
+      - 'AWS_ACCESS_KEY_ID=${_AWS_ACCESS_KEY_ID}'
+      - 'AWS_SECRET_ACCESS_KEY=${_AWS_SECRET_ACCESS_KEY}'
+
+    name: 'tackman/aws'
+    args: ['s3', 'cp', './dist', 's3://yurikure.wr-inst.org/app', '--recursive', '--exclude', '"*"', '--include', '"*.png"', '--cache-control', 'no-store', '--acl', 'public-read']
+    env:
+      - 'AWS_ACCESS_KEY_ID=${_AWS_ACCESS_KEY_ID}'
+      - 'AWS_SECRET_ACCESS_KEY=${_AWS_SECRET_ACCESS_KEY}'
+
+    name: 'tackman/aws'
+    args: ['s3', 'cp', './dist', 's3://yurikure.wr-inst.org/app', '--recursive', '--exclude', '"*"', '--include', '"*.css"', '--cache-control', 'no-store', '--acl', 'public-read']
+    env:
+      - 'AWS_ACCESS_KEY_ID=${_AWS_ACCESS_KEY_ID}'
+      - 'AWS_SECRET_ACCESS_KEY=${_AWS_SECRET_ACCESS_KEY}'
+
+#    name: 'tackman/aws'
+#    args: ['cloudfront', 'create-invalidation', '--distribution-id', '${_CLOUDFRONTID}', '--paths', '"/app/*"']
+#    env:
+#      - 'AWS_ACCESS_KEY_ID=${_AWS_ACCESS_KEY_ID}'
+#      - 'AWS_SECRET_ACCESS_KEY=${_AWS_SECRET_ACCESS_KEY}'
